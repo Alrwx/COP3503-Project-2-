@@ -18,6 +18,22 @@ struct Header {
     short height;
     char bitsPerPixel;
     char imageDescriptor; 
+
+    void Info() {
+        cout << "id Length: " << (int)idLength << endl;
+        cout << "colorMapType: " << colorMapType << endl;
+        cout << "dataTypeCode: " << dataTypeCode << endl;
+        cout << "colorMapOrigin: " << colorMapOrigin << endl;
+        cout << "colorMapLength: " << colorMapLength << endl;
+        cout << "colorMapDepth: " << colorMapDepth << endl;
+        cout << "xOrigin: " << xOrigin << endl;
+        cout << "yOrigin: " << yOrigin << endl;
+        cout << "width: " << width << endl;
+        cout << "height: " << height << endl;
+        cout << "bitsPerPixel: " << bitsPerPixel << endl;
+        cout << "imageDescriptor: " << imageDescriptor << endl;
+        cout << endl;
+    }
 };
 
 struct Pixel {
@@ -36,7 +52,7 @@ Image ReadPic(const string& ipath) {
     Image img;
 
     if (!tga.is_open()) {
-        cerr << "file not open" << endl;
+        cerr << "file not open buruhs" << endl;
         return img;
     }
 
@@ -77,6 +93,7 @@ Image ReadPic(const string& ipath) {
 };
 
 void WritePic(Image& img, const string& opath) {
+
     ofstream oimg(opath, ios::binary);
 
     if (!oimg.is_open()) {
@@ -111,12 +128,62 @@ void WritePic(Image& img, const string& opath) {
     oimg.close();
 };
 
+Image multiply(Image& img1, Image& img2) {
+    //normalizing the pixels
+    Image nImg;
+
+    nImg.header = img1.header;
+
+    for (int i = 0; i < (img1.header.height * img1.header.width); i++) {
+
+        float fblue1 = img1.pixels[i].blue / (float)255;
+        float fgreen1 = img1.pixels[i].green / (float)255;
+        float fred1 = img1.pixels[i].red / (float)255;
+
+        float fblue2 = img2.pixels[i].blue / (float)255;
+        float fgreen2 = img2.pixels[i].green / (float)255;
+        float fred2 = img2.pixels[i].red / (float)255;
+
+        Pixel newPix;
+        int nblue = (int)((fblue1 * fblue2 * 255) + 0.5);
+        newPix.blue = nblue;
+        int ngreen = (int)((fgreen1 * fgreen2 * 255) + 0.5);
+        newPix.green = ngreen;
+        int nred = (int)((fred1 * fred2 * 255) + 0.5);
+        newPix.red = nred;
+
+        nImg.pixels.push_back(newPix);
+    }
+
+    return nImg;
+};
+
 int main() {
-    // string path = "input/car.tga";
-    // Image img = ReadPic(path);
-    // string outpath = "output/task1.tga";
+    // string path1 = "examples/EXAMPLE_part1.tga";
+    // Image img = ReadPic(path1);
+    // cout << "examples!!!" << endl;
+    // img.header.Info();
+    // cout << endl;
+
+    // string path2 = "input/pattern1.tga";
+    // Image img1 = ReadPic(path2);
+    // cout << "layer1!!!" << endl;
+    // img1.header.Info();
+    // cout << endl;
+
+
+    //part 1.
+    string part1Path1 = "input/layer1.tga";
+    Image part1Img1 = ReadPic(part1Path1);
+    string part1Path2 = "input/pattern1.tga";
+    Image part1Img2 = ReadPic(part1Path2);
+
+    Image part1Img = multiply(part1Img1, part1Img2);
+    WritePic(part1Img, "output/task1.tga");
+
+    // string outpath = "output/.tga";
     // WritePic(img, outpath);
     // cout << "beans" << endl;
 
-    return 0;
+    // return 0;
 };
