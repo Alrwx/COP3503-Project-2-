@@ -128,6 +128,8 @@ void WritePic(Image& img, const string& opath) {
     oimg.close();
 };
 
+
+
 Image multiply(Image& img1, Image& img2) {
     //normalizing the pixels
     Image nImg;
@@ -155,6 +157,51 @@ Image multiply(Image& img1, Image& img2) {
         nImg.pixels.push_back(newPix);
     }
 
+    return nImg;
+};
+
+Image multiply(Image& img1, unsigned int num, string channel) {
+    Image nImg;
+
+    nImg.header = img1.header;
+    cout << num << channel << endl;
+    for (int i = 0; i < (img1.header.height * img1.header.width); i++) {
+
+        Pixel newPix;
+
+        float fblue1 = img1.pixels[i].blue / (float)255;
+        float fgreen1 = img1.pixels[i].green / (float)255;
+        float fred1 = img1.pixels[i].red / (float)255;
+
+        if (channel == "blue") {
+            if (((int)((fblue1 * num * 255) + 0.5)) >= 255) {
+                newPix.blue = 255;
+            } else if (num == 0) {
+                newPix.blue = 0;
+            } else {
+                newPix.blue = (int)((fblue1 * num * 255) + 0.5);
+            }
+        } else if (channel == "green") {
+            if (((int)((fgreen1 * num * 255) + 0.5)) >= 255) {
+                newPix.green = 255;
+            } else if (num == 0) {
+                newPix.green = 0;
+            } else {
+                newPix.green = (int)((fgreen1 * num * 255) + 0.5);
+            }
+        } else if (channel == "red") {
+            if (((int)((fred1 * num * 255) + 0.5)) >= 255) {
+                newPix.red = 255;
+            } else if (num == 0) {
+                newPix.red = 0;
+            } else {
+                newPix.red = (int)((fred1 * num * 255) + 0.5);
+            }
+        }
+
+        nImg.pixels.push_back(newPix);
+    }
+    
     return nImg;
 };
 
@@ -343,6 +390,13 @@ int main() {
     Image part6img1 = ReadPic("input/car.tga");
     Image part6Img = add(part6img1, 200, "green");
     WritePic(part6Img, "output/task6.tga");
+
+    //part 7.
+    Image part7img1 = ReadPic("input/car.tga");
+    Image part7Img = multiply(part7img1, 4, "red");
+    // part7Img = multiply(part7Img, 0, "blue");
+
+    WritePic(part7Img, "output/task7.tga");
 
     return 0;
 };
