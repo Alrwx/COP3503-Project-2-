@@ -322,6 +322,7 @@ Image add(Image& img1, Image& img2) {
 };
 
 Image add(Image& img1, unsigned int num, string channel) {
+
     Image nImg;
 
     nImg.header = img1.header;
@@ -382,6 +383,51 @@ Image add(Image& img1, unsigned int num, string channel) {
     return nImg;
 };
 
+Image overlay(Image& img1, Image& img2) {
+    Image nImg;
+
+    for (int i = 0; i < img1.header.height * img1.header.width; i++) {
+        Pixel newPix;
+        
+        //normalize im1
+        float fblue1 = img1.pixels[i].blue / (float)255;
+        float fgreen1 = img1.pixels[i].green / (float)255;
+        float fred1 = img1.pixels[i].red / (float)255;
+
+        //normalize iomg2
+        float fblue2 = img2.pixels[i].blue / (float)255;
+        float fgreen2 = img2.pixels[i].green / (float)255;
+        float fred2 = img2.pixels[i].red / (float)255;
+
+        if (fblue2 <= 0.5) {
+            float nblue = 2 * fblue2 * fblue1;
+            newPix.blue = (int)((nblue * 255) + 0.5);
+        } else {
+            float nblue = 1 - (2 * (1 - fblue1) * (1- fblue2));
+            newPix.blue = (int)((nblue * 255) + 0.5);
+        }
+
+        if (fgreen2 <= 0.5) {
+            float ngreen = 2 * fgreen2 * fgreen1;
+            newPix.green = (int)((ngreen * 255) + 0.5);
+        } else {
+            float ngreen = 1 - (2 * (1 - fgreen1) * (1- fgreen2));
+            newPix.green = (int)((ngreen * 255) + 0.5);
+        } 
+
+        if (fred2 <= 0.5) {
+            float nred = 2 * fred2 * fred1;
+            newPix.red = (int)((nred * 255) + 0.5);
+        } else {
+            float nred = 1 - (2 * (1 - fred1) * (1- fred2));
+            newPix.red = (int)((nred * 255) + 0.5);
+        }
+
+        nImg.pixels.push_back(newPix);
+    }
+    return nImg;
+}
+
 int main() {
     //header testing
     // string path1 = "examples/EXAMPLE_part1.tga";
@@ -431,6 +477,13 @@ int main() {
 
     Image part4Img_2 = subtract(part4Img_1, part4Img3);
     WritePic(part4Img_2, "output/task4.tga");
+
+    //part 5.
+    Image part5Img1 = ReadPic("input/layer1.tga");
+    Image part5Img2 = ReadPic("input/pattern1.tga");
+
+    Image part5Img = overlay(part5Img1, part5Img2);
+    WritePic(part5Img, "output/task5.tga");
 
     //part 6.
     Image part6img1 = ReadPic("input/car.tga");

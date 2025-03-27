@@ -1,4 +1,7 @@
 build:
+	g++ -o project2.out src/main.cpp
+
+run:
 	g++ -o project2.exe src/main.cpp
 	./project2.exe
 
@@ -7,4 +10,4 @@ test:
 	./test.exe
 
 clean:
-	rm project2.exe
+	del /F /Q *.o project2.exe test.exe 2> NUL
