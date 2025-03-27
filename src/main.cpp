@@ -164,10 +164,14 @@ Image multiply(Image& img1, unsigned int num, string channel) {
     Image nImg;
 
     nImg.header = img1.header;
-    cout << num << channel << endl;
+    // cout << num << channel << endl;
     for (int i = 0; i < (img1.header.height * img1.header.width); i++) {
 
         Pixel newPix;
+
+        newPix.blue = img1.pixels[i].blue;
+        newPix.green = img1.pixels[i].green;
+        newPix.red = img1.pixels[i].red;
 
         float fblue1 = img1.pixels[i].blue / (float)255;
         float fgreen1 = img1.pixels[i].green / (float)255;
@@ -201,6 +205,7 @@ Image multiply(Image& img1, unsigned int num, string channel) {
 
         nImg.pixels.push_back(newPix);
     }
+    // cout << (int)nImg.pixels[90].red << endl;
     
     return nImg;
 };
@@ -243,6 +248,36 @@ Image subtract(Image& img1, Image& img2) {
         nImg.pixels.push_back(newPix);
     }
 
+    return nImg;
+};
+
+Image screen(Image& img1, Image& img2) {
+    Image nImg;
+    nImg.header = img1.header;
+
+    for (int i = 0; i < img1.header.height * img1.header.width; i++ ) {
+        Pixel newPix;
+        // first bracket
+        float fblue1 = 1 - (img1.pixels[i].blue / (float)255);
+        float fgreen1 = 1 - (img1.pixels[i].green / (float)255);
+        float fred1 = 1 - (img1.pixels[i].red / (float)255);
+
+        //second bracket
+        float fblue2 = 1 - (img2.pixels[i].blue / (float)255);
+        float fgreen2 = 1 - (img2.pixels[i].green / (float)255);
+        float fred2 = 1 - (img2.pixels[i].red / (float)255);
+
+        //totaling
+        float nblue = (1 - (fblue1 * fblue2));
+        newPix.blue = (int)((nblue * 255) + 0.5);
+        float ngreen = (1 - (fgreen1 * fgreen2));
+        newPix.green = (int)((ngreen * 255) + 0.5);
+        float nred = (1 - (fred1 * fred2));
+        newPix.red = (int)((nred * 255) + 0.5);
+
+     
+        nImg.pixels.push_back(newPix);
+    }
     return nImg;
 };
 
@@ -375,6 +410,17 @@ int main() {
     Image part2Img = subtract(part2Img1, part2Img2);
     WritePic(part2Img, "output/task2.tga");
 
+    //part 3.
+    Image part3Img1 = ReadPic("input/layer1.tga");
+    Image part3Img2 = ReadPic("input/pattern2.tga");
+
+    Image part3Img_1 = multiply(part3Img1, part3Img2);
+    
+    Image part3Img3 = ReadPic("input/text.tga");
+    
+    Image part3Img_2 = screen(part3Img_1,part3Img3);
+    WritePic(part3Img_2, "output/task3.tga");
+
     //part 4.
     Image part4Img1 = ReadPic("input/layer2.tga");
     Image part4Img2 = ReadPic("input/circles.tga");
@@ -394,9 +440,9 @@ int main() {
     //part 7.
     Image part7img1 = ReadPic("input/car.tga");
     Image part7Img = multiply(part7img1, 4, "red");
-    // part7Img = multiply(part7Img, 0, "blue");
+    Image part7Img_ = multiply(part7Img, 0, "blue");
 
-    WritePic(part7Img, "output/task7.tga");
+    WritePic(part7Img_, "output/task7.tga");
 
     return 0;
 };
