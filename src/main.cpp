@@ -52,7 +52,7 @@ Image ReadPic(const string& ipath) {
     Image img;
 
     if (!tga.is_open()) {
-        cerr << "file not open buruhs" << endl;
+        cerr << "file " << ipath << " not open buruhs" << endl;
         return img;
     }
 
@@ -158,7 +158,150 @@ Image multiply(Image& img1, Image& img2) {
     return nImg;
 };
 
+Image subtract(Image& img1, Image& img2) {
+
+    Image nImg;
+
+    nImg.header = img1.header;
+
+    for (int i = 0; i < (img1.header.height * img1.header.width); i++) {
+
+        float fblue1 = img1.pixels[i].blue;
+        float fgreen1 = img1.pixels[i].green;
+        float fred1 = img1.pixels[i].red;
+
+        float fblue2 = img2.pixels[i].blue;
+        float fgreen2 = img2.pixels[i].green;
+        float fred2 = img2.pixels[i].red;
+
+        Pixel newPix;
+        if ((fblue1 - fblue2) <= 0) {
+            newPix.blue = 0;
+        } else {
+            newPix.blue = fblue1 - fblue2;
+        }
+
+        if ((fgreen1 - fgreen2) <= 0) {
+            newPix.green = 0;
+        } else {
+            newPix.green = fgreen1 - fgreen2;
+        }
+
+        if ((fred1 - fred2) <= 0) {
+            newPix.red = 0;
+        } else {
+            newPix.red = fred1 - fred2;
+        }
+
+        nImg.pixels.push_back(newPix);
+    }
+
+    return nImg;
+};
+
+Image add(Image& img1, Image& img2) {
+    Image nImg;
+
+    nImg.header = img1.header;
+
+    for (int i = 0; i < (img1.header.height * img1.header.width); i++) {
+
+        float fblue1 = img1.pixels[i].blue;
+        float fgreen1 = img1.pixels[i].green;
+        float fred1 = img1.pixels[i].red;
+
+        float fblue2 = img2.pixels[i].blue;
+        float fgreen2 = img2.pixels[i].green;
+        float fred2 = img2.pixels[i].red;
+
+        Pixel newPix;
+        if ((fblue1 + fblue2) >= 255) {
+            newPix.blue = 255;
+        } else {
+            newPix.blue = fblue1 + fblue2;
+        }
+
+        if ((fgreen1 + fgreen2) >= 255) {
+            newPix.green = 255;
+        } else {
+            newPix.green = fgreen1 + fgreen2;
+        }
+
+        if ((fred1 + fred2) >= 255) {
+            newPix.red = 255;
+        } else {
+            newPix.red = fred1 + fred2;
+        }
+
+        nImg.pixels.push_back(newPix);
+    }
+
+    return nImg;
+};
+
+Image add(Image& img1, unsigned int num, string channel) {
+    Image nImg;
+
+    nImg.header = img1.header;
+
+    for (int i = 0; i < (img1.header.height * img1.header.width); i++) {
+        float fblue1 = img1.pixels[i].blue;
+        float fgreen1 = img1.pixels[i].green;
+        float fred1 = img1.pixels[i].red;
+
+        Pixel newPix;
+
+        newPix.blue = img1.pixels[i].blue;
+        newPix.green = img1.pixels[i].green;
+        newPix.red = img1.pixels[i].red;
+
+        if (channel == "blue") {
+            if ((fblue1 + num) >= 255) {
+                newPix.blue = 255;
+            } else {
+                newPix.blue = fblue1 + num;
+            }
+        } else if (channel == "green") {
+            if ((fgreen1 + num) >= 255) {
+                newPix.green = 255;
+            } else {
+                newPix.green = fgreen1 + num;
+            }
+        } else if (channel == "red") {
+
+            if ((fred1 + num) >= 255) {
+                newPix.red = 255;
+            } else {
+                newPix.red = fred1 + num;
+            }
+        } else {
+            if ((fblue1 + num) >= 255) {
+                newPix.blue = 255;
+            } else {
+                newPix.blue = fblue1 + num;
+            }
+    
+            if ((fgreen1 + num) >= 255) {
+                newPix.green = 255;
+            } else {
+                newPix.green = fgreen1 + num;
+            }
+    
+            if ((fred1 + num) >= 255) {
+                newPix.red = 255;
+            } else {
+                newPix.red = fred1 + num;
+            }
+        }
+
+        nImg.pixels.push_back(newPix);
+    }
+
+    return nImg;
+};
+
 int main() {
+    //header testing
     // string path1 = "examples/EXAMPLE_part1.tga";
     // Image img = ReadPic(path1);
     // cout << "examples!!!" << endl;
@@ -171,19 +314,35 @@ int main() {
     // img1.header.Info();
     // cout << endl;
 
-
     //part 1.
-    string part1Path1 = "input/layer1.tga";
-    Image part1Img1 = ReadPic(part1Path1);
-    string part1Path2 = "input/pattern1.tga";
-    Image part1Img2 = ReadPic(part1Path2);
+    Image part1Img1 = ReadPic("input/layer1.tga");
+    Image part1Img2 = ReadPic("input/pattern1.tga");
 
     Image part1Img = multiply(part1Img1, part1Img2);
     WritePic(part1Img, "output/task1.tga");
 
-    // string outpath = "output/.tga";
-    // WritePic(img, outpath);
-    // cout << "beans" << endl;
+    //part 2.
+    Image part2Img1 = ReadPic("input/car.tga");
+    Image part2Img2 = ReadPic("input/layer2.tga");
 
-    // return 0;
+    Image part2Img = subtract(part2Img1, part2Img2);
+    WritePic(part2Img, "output/task2.tga");
+
+    //part 4.
+    Image part4Img1 = ReadPic("input/layer2.tga");
+    Image part4Img2 = ReadPic("input/circles.tga");
+
+    Image part4Img_1 = multiply(part4Img1,part4Img2);
+
+    Image part4Img3 = ReadPic("input/pattern2.tga");
+
+    Image part4Img_2 = subtract(part4Img_1, part4Img3);
+    WritePic(part4Img_2, "output/task4.tga");
+
+    //part 6.
+    Image part6img1 = ReadPic("input/car.tga");
+    Image part6Img = add(part6img1, 200, "green");
+    WritePic(part6Img, "output/task6.tga");
+
+    return 0;
 };
