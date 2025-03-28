@@ -527,15 +527,42 @@ Image flip(Image& img) {
     return nImg;
 };
 
+void msg(int type) {
+    if (type == 1) {
+        cout << "yeah your on your own bucko" << endl;
+    } else if (type == 2) {
+        cout << "Invalid method name." << endl;
+    } else if (type == 3) {
+        cout << "Missing argument." << endl;
+    } else if (type == 4) {
+        cout << "Invalid argument, invalid file name." << endl;
+    } else if (type == 5) {
+        cout << "Invalid argument, file does not exist." << endl;
+    } else if (type == 6) {
+        cout << "Invalid argument, expected a number." << endl;
+    }
+};
+
 int main(int argc, char* argv[]) {
-    if (argc > 1) {
+    if ((argc < 2) || ((string)argv[1]) == "--help") {
+        msg(1);
+    } else {
         for (int i = 1; i < argc; i++) {
             cout << "Arg #" << i << argv[i] << endl;
         }
-
-
-    } else {
         
+    string arg;
+    for (int i = 1; i < argc; i++) {
+        arg = argv[i];
+        
+
+
+
+
+    }
+
+
+
     }
     return 0;
 };
