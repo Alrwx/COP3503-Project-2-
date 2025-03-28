@@ -54,6 +54,7 @@ Image ReadPic(const string& ipath) {
 
     if (!tga.is_open()) {
         cerr << "file " << ipath << " not open buruhs" << endl;
+        throw invalid_argument("invalid num");
         return img;
     }
 
@@ -527,7 +528,7 @@ Image flip(Image& img) {
     return nImg;
 };
 
-void msg(int type) {
+void msg(int type, bool& end) {
     if (type == 1) {
         cout << "yeah your on your own bucko" << endl;
     } else if (type == 2) {
@@ -541,28 +542,57 @@ void msg(int type) {
     } else if (type == 6) {
         cout << "Invalid argument, expected a number." << endl;
     }
+
+    end = true;
 };
 
 int main(int argc, char* argv[]) {
+    bool t = false;
     if ((argc < 2) || ((string)argv[1]) == "--help") {
-        msg(1);
+        msg(1, t);
     } else {
         for (int i = 1; i < argc; i++) {
-            cout << "Arg #" << i << argv[i] << endl;
+            cout << "Arg #" << i << " " << argv[i] << endl;
         }
         
     string arg;
+    Image tracking;
     for (int i = 1; i < argc; i++) {
-        arg = argv[i];
-        
+        if (t) {
+            break;        
+        }
 
+        arg = (string)argv[i];
 
-
-
+        if (arg == "multiply") {
+            if (argc < (i + 2)) {
+                msg(3, t);
+                return 0;
+            } else {
+                Image mult;
+                Image mult1;
+                Image mult2;
+                    try {
+                        mult1 = ReadPic((string)argv[i+1]);
+                        mult2 = ReadPic((string)argv[i+2]);
+                    } catch (invalid_argument& e) {
+                        msg(4,t);
+                    }
+                if (i == 1) {
+                    mult = multiply(mult1,mult2);
+                } else {
+                    mult = multiply(tracking, mult2);
+                }
+                tracking = mult;
+            }
+        }
+        // else {
+        //     msg(2, t);
+        //     return 0;
+        // }
     }
-
-
-
+    cout << "done" << endl;
+    WritePic(tracking, "output/img.tga");
     }
     return 0;
 };
