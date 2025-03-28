@@ -1,12 +1,12 @@
-build:
-	g++ -o project2.out src/main.cpp
+make:
+	g++ -std=c++11 -o project2.out src/main.cpp
 
 run:
-	g++ -o project2.exe src/main.cpp
+	g++ -std=c++11 -o project2.exe src/main.cpp
 	./project2.exe
 
 test:
-	g++ -o test.exe src/test.cpp
+	g++ -std=c++11 -o test.exe src/test.cpp
 	./test.exe
 
 clean:

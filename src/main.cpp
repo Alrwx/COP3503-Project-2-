@@ -2,6 +2,7 @@
 #include <fstream>
 #include <string>
 #include <vector>
+#include <algorithm>
 using namespace std;
 
 
@@ -386,6 +387,7 @@ Image add(Image& img1, unsigned int num, string channel) {
 Image overlay(Image& img1, Image& img2) {
     Image nImg;
 
+    nImg.header = img1.header;
     for (int i = 0; i < img1.header.height * img1.header.width; i++) {
         Pixel newPix;
         
@@ -401,32 +403,129 @@ Image overlay(Image& img1, Image& img2) {
 
         if (fblue2 <= 0.5) {
             float nblue = 2 * fblue2 * fblue1;
-            newPix.blue = (int)((nblue * 255) + 0.5);
-        } else {
+            if (((int)((nblue * 255) + 0.5)) >= 255) {
+                newPix.blue = 255;
+            } else if ((int)((nblue * 255) + 0.5) <= 0) {
+                newPix.blue = 0;
+            } else {
+                newPix.blue = (int)((nblue * 255) + 0.5);
+            }
+        } else if (fblue2 > 0.5) {
             float nblue = 1 - (2 * (1 - fblue1) * (1- fblue2));
-            newPix.blue = (int)((nblue * 255) + 0.5);
+            if ((int)((nblue * 255) + 0.5) >= 255) {
+                newPix.blue = 255;
+            }
+            else if ((int)((nblue * 255) + 0.5) <= 0) {
+                newPix.blue = 0;
+            } else {
+                newPix.blue = (int)((nblue * 255) + 0.5);
+            }
         }
 
         if (fgreen2 <= 0.5) {
             float ngreen = 2 * fgreen2 * fgreen1;
-            newPix.green = (int)((ngreen * 255) + 0.5);
-        } else {
+            if ((int)((ngreen * 255) + 0.5) >= 255) {
+                newPix.green = 255;
+            } else if ((int)((ngreen * 255) + 0.5) <= 0) {
+                newPix.green = 0;
+            } else {
+                newPix.green = (int)((ngreen * 255) + 0.5);
+            }
+        } else if (fgreen2 > 0.5) {
             float ngreen = 1 - (2 * (1 - fgreen1) * (1- fgreen2));
-            newPix.green = (int)((ngreen * 255) + 0.5);
+            if ((int)((ngreen * 255) + 0.5) >= 255) {
+                newPix.green = 255;
+            } else if ((int)((ngreen * 255) + 0.5) <= 0) {
+                newPix.green = 0;
+            } else {
+                newPix.green = (int)((ngreen * 255) + 0.5);
+            }
         } 
+
 
         if (fred2 <= 0.5) {
             float nred = 2 * fred2 * fred1;
-            newPix.red = (int)((nred * 255) + 0.5);
-        } else {
+            if ((int)((nred * 255) + 0.5) >= 255) {
+                newPix.red = 255;
+            } else if ((int)((nred * 255) + 0.5) <= 0) {
+                newPix.red = 0;
+            } else {
+                newPix.red = (int)((nred * 255) + 0.5);
+            }
+        } else if (fred2 > 0.5) {
             float nred = 1 - (2 * (1 - fred1) * (1- fred2));
-            newPix.red = (int)((nred * 255) + 0.5);
+            if ((int)((nred * 255) + 0.5) >= 255) {
+                newPix.red = 255;
+            } else if ((int)((nred * 255) + 0.5) <= 0) {
+                newPix.red = 0;
+            } else {
+                newPix.red = (int)((nred * 255) + 0.5);
+            }
         }
 
         nImg.pixels.push_back(newPix);
     }
     return nImg;
 }
+
+Image onlyColor(Image& img, string color) {
+    Image nImg;
+
+    nImg.header = img.header;
+
+    for (int i = 0; i < img.header.height * img.header.width; i++) {
+        Pixel newPix;
+
+        if (color == "red") {
+            newPix.blue = img.pixels[i].red;
+            newPix.green = img.pixels[i].red;
+            newPix.red = img.pixels[i].red;
+        } else if (color == "green") {
+            newPix.blue = img.pixels[i].green;
+            newPix.green = img.pixels[i].green;
+            newPix.red = img.pixels[i].green;
+        } else {
+            newPix.blue = img.pixels[i].blue;
+            newPix.green = img.pixels[i].blue;
+            newPix.red = img.pixels[i].blue;
+        }
+
+        nImg.pixels.push_back(newPix);
+    }
+    // cout << nImg.pixels[100].blue << ", " << nImg.pixels[100].green << ", " << nImg.pixels[100].red << endl;
+    return nImg;
+}
+
+Image combine(Image& red, Image& green, Image& blue) {
+
+    Image nImg;
+
+    nImg.header = red.header;
+
+    for (int i = 0; i < red.header.width * red.header.height; i++) {
+        Pixel newPix;
+
+        newPix.red = red.pixels[i].red;
+        newPix.blue = blue.pixels[i].blue;
+        newPix.green = green.pixels[i].green;
+
+        nImg.pixels.push_back(newPix);
+    }
+
+    return nImg;
+};
+
+Image flip(Image& img) {
+    Image nImg;
+
+    nImg.header = img.header;
+
+    for (int i = 0; i < img.pixels.size(); i++) {
+        nImg.pixels.push_back(img.pixels[img.pixels.size() - i]);
+    }
+
+    return nImg;
+};
 
 int main() {
     //header testing
@@ -447,14 +546,14 @@ int main() {
     Image part1Img2 = ReadPic("input/pattern1.tga");
 
     Image part1Img = multiply(part1Img1, part1Img2);
-    WritePic(part1Img, "output/task1.tga");
+    WritePic(part1Img, "output/part1.tga");
 
     //part 2.
     Image part2Img1 = ReadPic("input/car.tga");
     Image part2Img2 = ReadPic("input/layer2.tga");
 
     Image part2Img = subtract(part2Img1, part2Img2);
-    WritePic(part2Img, "output/task2.tga");
+    WritePic(part2Img, "output/part2.tga");
 
     //part 3.
     Image part3Img1 = ReadPic("input/layer1.tga");
@@ -465,7 +564,7 @@ int main() {
     Image part3Img3 = ReadPic("input/text.tga");
     
     Image part3Img_2 = screen(part3Img_1,part3Img3);
-    WritePic(part3Img_2, "output/task3.tga");
+    WritePic(part3Img_2, "output/part3.tga");
 
     //part 4.
     Image part4Img1 = ReadPic("input/layer2.tga");
@@ -476,26 +575,49 @@ int main() {
     Image part4Img3 = ReadPic("input/pattern2.tga");
 
     Image part4Img_2 = subtract(part4Img_1, part4Img3);
-    WritePic(part4Img_2, "output/task4.tga");
+    WritePic(part4Img_2, "output/part4.tga");
 
     //part 5.
     Image part5Img1 = ReadPic("input/layer1.tga");
     Image part5Img2 = ReadPic("input/pattern1.tga");
 
     Image part5Img = overlay(part5Img1, part5Img2);
-    WritePic(part5Img, "output/task5.tga");
+    WritePic(part5Img, "output/part5.tga");
 
     //part 6.
     Image part6img1 = ReadPic("input/car.tga");
     Image part6Img = add(part6img1, 200, "green");
-    WritePic(part6Img, "output/task6.tga");
+    WritePic(part6Img, "output/part6.tga");
 
     //part 7.
     Image part7img1 = ReadPic("input/car.tga");
     Image part7Img = multiply(part7img1, 4, "red");
     Image part7Img_ = multiply(part7Img, 0, "blue");
 
-    WritePic(part7Img_, "output/task7.tga");
+    WritePic(part7Img_, "output/part7.tga");
 
-    return 0;
+    //part 8.
+    Image part8img1 = ReadPic("input/car.tga");
+
+    Image part8red = onlyColor(part8img1, "red");
+    Image part8green = onlyColor(part8img1, "green");
+    Image part8blue = onlyColor(part8img1, "blue");
+
+    WritePic(part8blue, "output/part8_b.tga");
+    WritePic(part8green, "output/part8_g.tga");
+    WritePic(part8red, "output/part8_r.tga");
+
+    //part 9.
+    Image red = ReadPic("input/layer_red.tga");
+    Image blue = ReadPic("input/layer_blue.tga");
+    Image green = ReadPic("input/layer_green.tga");
+
+    Image rgb = combine(red, green, blue);
+    WritePic(rgb, "output/part9.tga");
+
+    //part 10.
+    Image Part10Img = ReadPic("input/text2.tga");
+
+    Image flipee = flip(Part10Img);
+    WritePic(flipee, "output/part10.tga");
 };

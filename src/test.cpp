@@ -67,9 +67,50 @@ void overlay(int blue1, int green1, int red1, int blue2, int green2, int red2) {
     cout << bigblue << ", " << biggreen << ", " << bigred << endl;
 }
 
+void onlyColor(int blue, int green, int red, string color) {
+    int bigblue;
+    int biggreen;
+    int bigred;
+        if (color == "red") {
+            bigblue = red;
+            biggreen = red;
+            bigred = red;
+        } else if (color == "green") {
+            bigblue = green;
+            biggreen = green;
+            bigred = green;
+        } else {
+            bigblue = blue;
+            biggreen = blue;
+            bigred = blue;
+        }
+        cout << bigblue << ", " << biggreen << ", " << bigred << endl;
+};
+    
+
+void reverse(vector<int> nums) {
+
+    vector<int> rev;
+    for (int i = 0; i < nums.size(); i++) {
+        rev.push_back(nums[nums.size() - i]);
+    }
+
+    for (int i = 0; i < rev.size(); i++) {
+        cout << rev[i] << ", ";
+    }
+}
+
+
 
 int main () {
     // screen(0, 0, 0, 87, 126, 150);
 
-    overlay(50, 60, 60, 200, 100, 0);
+    // overlay(255, 1, 60, 127, 127, 0);
+
+    onlyColor(100, 250, 67, "blue");
+
+    vector<int> vec = {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19};
+    reverse(vec);
+
+
 };
