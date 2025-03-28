@@ -528,7 +528,7 @@ Image flip(Image& img) {
     return nImg;
 };
 
-void msg(int type, bool& end) {
+void msg(int type) {
     if (type == 1) {
         cout << "yeah your on your own bucko" << endl;
     } else if (type == 2) {
@@ -542,14 +542,12 @@ void msg(int type, bool& end) {
     } else if (type == 6) {
         cout << "Invalid argument, expected a number." << endl;
     }
-
-    end = true;
 };
 
 int main(int argc, char* argv[]) {
-    bool t = false;
     if ((argc < 2) || ((string)argv[1]) == "--help") {
-        msg(1, t);
+        msg(1);
+        return 0;
     } else {
         for (int i = 1; i < argc; i++) {
             cout << "Arg #" << i << " " << argv[i] << endl;
@@ -558,39 +556,90 @@ int main(int argc, char* argv[]) {
     string arg;
     Image tracking;
     for (int i = 1; i < argc; i++) {
-        if (t) {
-            break;        
-        }
+        cout << "hi! " << i << endl;
 
         arg = (string)argv[i];
 
-        if (arg == "multiply") {
-            if (argc < (i + 2)) {
-                msg(3, t);
+        if (arg == "multiply" || arg == "subtract" || arg == "overlay" || arg == "screen") {
+            int next;
+                if (i == 1) {
+                    next = 2;
+                } else {
+                    next = 1;
+                }
+            if (argc < (i + next)) {
+                msg(3);
                 return 0;
             } else {
-                Image mult;
-                Image mult1;
-                Image mult2;
-                    try {
-                        mult1 = ReadPic((string)argv[i+1]);
-                        mult2 = ReadPic((string)argv[i+2]);
-                    } catch (invalid_argument& e) {
-                        msg(4,t);
-                    }
-                if (i == 1) {
-                    mult = multiply(mult1,mult2);
-                } else {
-                    mult = multiply(tracking, mult2);
+                Image result;
+                Image img1, img2;
+                try {
+                    img1 = ReadPic((string)argv[i+1]);
+                    img2 = ReadPic((string)argv[i+next]);
+                } catch (invalid_argument& e) {
+                    msg(4);
+                    return 0;
                 }
-                tracking = mult;
+
+                if (arg == "multiply") {
+                    if (i == 1) {
+                        result = multiply(img1, img2);
+                    } else {
+                        result = multiply(tracking,img1);
+                    }
+                } else if (arg == "subtract") {
+                    if (i == 1) {
+                        result = subtract(img1, img2);
+                    } else {
+                        result = subtract(tracking,img1);
+                    }
+                } else if (arg == "overlay") {
+                    if (i == 1) {
+                        result = overlay(img1, img2);
+                    } else {
+                        result = overlay(tracking,img1);
+                    }
+                } else if (arg == "screen") {
+                    if (i == 1) {
+                        result = screen(img1, img2);
+                    } else {
+                        result = screen(tracking,img1);
+                    }
+                } else if (arg == "screen") {
+                    if (i == 1) {
+                        result = screen(img1, img2);
+                    } else {
+                        result = screen(tracking,img1);
+                    }
+                }
+                
+                tracking = result;
+                i+= next;
+                cout << i << endl;
             }
+        } else if (arg == "scaleblue" || arg == "scalered" || arg == "scalered") {
+            cout << "bruh" << endl;
+        } else if (arg == "flip" || arg == "onlyred" || arg == "onlygreen" || arg == "onlyblue") {
+            int next;
+                if (i == 1) {
+                    next = 2;
+                } else {
+                    next = 1;
+                }
+            if (argc < (i + next)) {
+                msg(3);
+                return 0;
+            } else {
+                cout << "bruh" << endl;
+            }
+        } else if (arg == "combine") {
+            cout << "bruh" << endl;
+        } else {
+            msg(2);
+            return 0;
         }
-        // else {
-        //     msg(2, t);
-        //     return 0;
-        // }
     }
+        
     cout << "done" << endl;
     WritePic(tracking, "output/img.tga");
     }
