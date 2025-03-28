@@ -521,7 +521,7 @@ Image flip(Image& img) {
     nImg.header = img.header;
 
     for (int i = 0; i < img.pixels.size(); i++) {
-        nImg.pixels.push_back(img.pixels[img.pixels.size() - i]);
+        nImg.pixels.push_back(img.pixels[img.pixels.size() - i - 1]);
     }
 
     return nImg;
