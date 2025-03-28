@@ -527,97 +527,15 @@ Image flip(Image& img) {
     return nImg;
 };
 
-int main() {
-    //header testing
-    // string path1 = "examples/EXAMPLE_part1.tga";
-    // Image img = ReadPic(path1);
-    // cout << "examples!!!" << endl;
-    // img.header.Info();
-    // cout << endl;
+int main(int argc, char* argv[]) {
+    if (argc > 1) {
+        for (int i = 1; i < argc; i++) {
+            cout << "Arg #" << i << argv[i] << endl;
+        }
 
-    // string path2 = "input/pattern1.tga";
-    // Image img1 = ReadPic(path2);
-    // cout << "layer1!!!" << endl;
-    // img1.header.Info();
-    // cout << endl;
 
-    //part 1.
-    Image part1Img1 = ReadPic("input/layer1.tga");
-    Image part1Img2 = ReadPic("input/pattern1.tga");
-
-    Image part1Img = multiply(part1Img1, part1Img2);
-    WritePic(part1Img, "output/part1.tga");
-
-    //part 2.
-    Image part2Img1 = ReadPic("input/car.tga");
-    Image part2Img2 = ReadPic("input/layer2.tga");
-
-    Image part2Img = subtract(part2Img1, part2Img2);
-    WritePic(part2Img, "output/part2.tga");
-
-    //part 3.
-    Image part3Img1 = ReadPic("input/layer1.tga");
-    Image part3Img2 = ReadPic("input/pattern2.tga");
-
-    Image part3Img_1 = multiply(part3Img1, part3Img2);
-    
-    Image part3Img3 = ReadPic("input/text.tga");
-    
-    Image part3Img_2 = screen(part3Img_1,part3Img3);
-    WritePic(part3Img_2, "output/part3.tga");
-
-    //part 4.
-    Image part4Img1 = ReadPic("input/layer2.tga");
-    Image part4Img2 = ReadPic("input/circles.tga");
-
-    Image part4Img_1 = multiply(part4Img1,part4Img2);
-
-    Image part4Img3 = ReadPic("input/pattern2.tga");
-
-    Image part4Img_2 = subtract(part4Img_1, part4Img3);
-    WritePic(part4Img_2, "output/part4.tga");
-
-    //part 5.
-    Image part5Img1 = ReadPic("input/layer1.tga");
-    Image part5Img2 = ReadPic("input/pattern1.tga");
-
-    Image part5Img = overlay(part5Img1, part5Img2);
-    WritePic(part5Img, "output/part5.tga");
-
-    //part 6.
-    Image part6img1 = ReadPic("input/car.tga");
-    Image part6Img = add(part6img1, 200, "green");
-    WritePic(part6Img, "output/part6.tga");
-
-    //part 7.
-    Image part7img1 = ReadPic("input/car.tga");
-    Image part7Img = multiply(part7img1, 4, "red");
-    Image part7Img_ = multiply(part7Img, 0, "blue");
-
-    WritePic(part7Img_, "output/part7.tga");
-
-    //part 8.
-    Image part8img1 = ReadPic("input/car.tga");
-
-    Image part8red = onlyColor(part8img1, "red");
-    Image part8green = onlyColor(part8img1, "green");
-    Image part8blue = onlyColor(part8img1, "blue");
-
-    WritePic(part8blue, "output/part8_b.tga");
-    WritePic(part8green, "output/part8_g.tga");
-    WritePic(part8red, "output/part8_r.tga");
-
-    //part 9.
-    Image red = ReadPic("input/layer_red.tga");
-    Image blue = ReadPic("input/layer_blue.tga");
-    Image green = ReadPic("input/layer_green.tga");
-
-    Image rgb = combine(red, green, blue);
-    WritePic(rgb, "output/part9.tga");
-
-    //part 10.
-    Image Part10Img = ReadPic("input/text2.tga");
-
-    Image flipee = flip(Part10Img);
-    WritePic(flipee, "output/part10.tga");
+    } else {
+        
+    }
+    return 0;
 };
