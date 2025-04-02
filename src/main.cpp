@@ -53,7 +53,7 @@ Image ReadPic(const string& ipath) {
     Image img;
 
     if (!tga.is_open()) {
-        cerr << "file " << ipath << " not open buruhs" << endl;
+        // cerr << "file " << ipath << " not open buruhs" << endl;
         throw invalid_argument("invalid num");
         return img;
     }
@@ -541,12 +541,35 @@ void msg(int type) {
         cout << "Invalid argument, file does not exist." << endl;
     } else if (type == 6) {
         cout << "Invalid argument, expected a number." << endl;
+    } else if (type == 7) {
+        cout << "Invalid file name." << endl;
     }
 };
 
+bool validTGA(string tga) {
+    string concattga;
+    concattga += tga[tga.size() - 4];
+    concattga += tga[tga.size() - 3];
+    concattga += tga[tga.size() - 2];
+    concattga += tga[tga.size() - 1];
+
+    if (concattga == ".tga") {
+        return true;
+    }
+    return false;
+}
+
 int main(int argc, char* argv[]) {
     string arg;
+    string out;
     Image tracking;
+    bool start;
+
+    out = argv[1];
+    if (!validTGA(out)) {
+        msg(7);
+        return 0;
+    }
 
     if ((argc < 2) || ((string)argv[1]) == "--help") {
         msg(1);
@@ -555,66 +578,92 @@ int main(int argc, char* argv[]) {
         for (int i = 1; i < argc; i++) {
             cout << "Arg #" << i << " " << argv[i] << endl;
         }    
-    for (int i = 1; i < argc; i++) {
-        cout << "hi! " << i << endl;
 
+    for (int i = 2; i < argc; i++) {
+        Image result;
+        // cout << "run! " << i << endl;
+        start = i == 2;
         arg = (string)argv[i];
+        Image img1;
+
+        if (start) {
+            if (!validTGA(arg)) {
+                msg(7);
+                return 0;
+            }
+
+            try {
+                img1 = ReadPic(arg);
+            } catch (invalid_argument& e) {
+                msg(4);
+                return 0;
+            }
+
+            arg = (string)argv[i+1];
+        }
 
         if (arg == "multiply" || arg == "subtract" || arg == "overlay" || arg == "screen") {
             int next;
-                if (i == 1) {
-                    next = 2;
-                } else {
-                    next = 1;
-                }
-            if (argc < (i + next)) {
+            if (start) {
+                next = 2;
+            } else {
+                next = 1;
+            }
+
+            if (argc < (i + next + 1)) {
                 msg(3);
                 return 0;
             } else {
-                Image result;
-                Image img1, img2;
+                string filename;
+                filename = (string)argv[i+next];
+
+                if (!validTGA(filename)) {
+                    msg(7);
+                    return 0;
+                }
+
+                Image img2;
                 try {
-                    img1 = ReadPic((string)argv[i+1]);
-                    img2 = ReadPic((string)argv[i+next]);
+                    img2 = ReadPic(filename);
                 } catch (invalid_argument& e) {
                     msg(4);
                     return 0;
                 }
 
                 if (arg == "multiply") {
-                    if (i == 1) {
+                    if (start) {
                         result = multiply(img1, img2);
                     } else {
-                        result = multiply(tracking,img1);
+                        result = multiply(tracking,img2);
                     }
                 } else if (arg == "subtract") {
-                    if (i == 1) {
+                    if (start) {
                         result = subtract(img1, img2);
                     } else {
-                        result = subtract(tracking,img1);
+                        result = subtract(tracking,img2);
                     }
                 } else if (arg == "overlay") {
-                    if (i == 1) {
+                    if (start) {
                         result = overlay(img1, img2);
                     } else {
-                        result = overlay(tracking,img1);
+                        result = overlay(tracking,img2);
                     }
                 } else if (arg == "screen") {
-                    if (i == 1) {
+                    if (start) {
                         result = screen(img1, img2);
                     } else {
-                        result = screen(tracking,img1);
+                        result = screen(tracking,img2);
                     }
                 } else if (arg == "screen") {
-                    if (i == 1) {
+                    if (start) {
                         result = screen(img1, img2);
                     } else {
-                        result = screen(tracking,img1);
+                        result = screen(tracking,img2);
                     }
                 }
                 
                 tracking = result;
-                i+= next;
+                i += next;
                 cout << i << endl;
             }
         } else if (arg == "scaleblue" || arg == "scalegreen" || arg == "scalered" || arg == "addred" || arg == "addgreen" || arg == "addblue") {
@@ -710,14 +759,15 @@ int main(int argc, char* argv[]) {
             }
         } else if (arg == "combine") {
             cout << "bruh" << endl;
-        } else {
-            msg(2);
-            return 0;
         }
+        // else {
+        //     msg(2);
+        //     return 0;
+        // }
         }
     }
         
     cout << "done" << endl;
-    WritePic(tracking, "output/img.tga");
+    WritePic(tracking, out);
     return 0;
 };
