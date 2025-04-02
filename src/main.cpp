@@ -536,8 +536,7 @@ Image flip(Image& img) {
 
 void msg(int type) {
     if (type == 1) {
-        cout << "Project 2: Image Processing, Spring 2025\n" << endl;
-        cout << "\t./project2.out [output] [firstImage] [method] [...]" << endl;
+        cout << "Project 2: Image Processing, Spring 2025\n\nUsage:\n\t./project2.out [output] [firstImage] [method] [...]" << endl;
     } else if (type == 2) {
         cout << "Invalid method name." << endl;
     } else if (type == 3) {
@@ -547,9 +546,11 @@ void msg(int type) {
     } else if (type == 5) {
         cout << "Invalid argument, file does not exist." << endl;
     } else if (type == 6) {
-        cout << "Invalid argument, expected a number." << endl;
+        cout << "Invalid argument, expected number." << endl;
     } else if (type == 7) {
         cout << "Invalid file name." << endl;
+    } else if (type == 8) {
+        cout << "File does not exist." << endl;
     }
 };
 
@@ -601,7 +602,7 @@ int main(int argc, char* argv[]) {
             try {
                 img1 = ReadPic(arg);
             } catch (invalid_argument& e) {
-                msg(4);
+                msg(8);
                 return 0;
             }
 
@@ -624,7 +625,7 @@ int main(int argc, char* argv[]) {
                 filename = (string)argv[i+next];
 
                 if (!validTGA(filename)) {
-                    msg(7);
+                    msg(4);
                     return 0;
                 }
 
@@ -674,6 +675,7 @@ int main(int argc, char* argv[]) {
             }
         } else if (arg == "scaleblue" || arg == "scalegreen" || arg == "scalered" || arg == "addred" || arg == "addgreen" || arg == "addblue") {
             int next;
+            int num;
                 if (start) {
                     next = 2;
                 } else {
@@ -684,7 +686,12 @@ int main(int argc, char* argv[]) {
                 return 0;
             } else {
                 if (arg == "scaleblue") {
-                    int num = stoi(argv[i+next]);
+                    try {
+                        num = stoi(argv[i+next]);
+                    } catch (invalid_argument) {
+                        msg(6);
+                        return 0;
+                    }
                     if (start) {
                         result = multiply(img1, (num), "blue");
                     } else {
@@ -693,35 +700,63 @@ int main(int argc, char* argv[]) {
                 }
 
                 else if (arg == "scalegreen") {
-                    int num = stoi(argv[i+next]);
+                    try {
+                        num = stoi(argv[i+next]);
+                    } catch (invalid_argument) {
+                        msg(6);
+                        return 0;
+                    }
                     if (start) {
                         result = multiply(img1, (num), "green");
                     } else {
                         result = multiply(tracking, (num), "green");
                     }
                 } else if (arg == "scalered") {
-                    int num = stoi(argv[i+next]);
+                    try {
+                        num = stoi(argv[i+next]);
+                    } catch (invalid_argument) {
+                        msg(6);
+                        return 0;
+                    }
                     if (start) {
                         result = multiply(img1, (num), "red");
                     } else {
                         result = multiply(tracking, (num), "red");
                     }
                 } else if (arg == "addred") {
-                    int num = stoi(argv[i+next]);
+                    try {
+                        num = stoi(argv[i+next]);
+                    } catch (invalid_argument) {
+                        msg(6);
+                        return 0;
+                    }
+
                     if (start) {
                         result = add(img1, (num), "red");
                     } else {
                         result = add(tracking, (num), "red");
                     }
                 } else if (arg == "addgreen") {
-                    int num = stoi(argv[i+next]);
+                    try {
+                        num = stoi(argv[i+next]);
+                    } catch (invalid_argument) {
+                        msg(6);
+                        return 0;
+                    }
+
                     if (start) {
                         result = add(img1, (num), "green");
                     } else {
                         result = add(tracking, (num), "green");
                     }
                 } else if (arg == "addblue") {
-                    int num = stoi(argv[i+next]);
+                    try {
+                        num = stoi(argv[i+next]);
+                    } catch (invalid_argument) {
+                        msg(6);
+                        return 0;
+                    }
+
                     if (start) {
                         result = add(img1, (num), "blue");
                     } else {
@@ -739,15 +774,30 @@ int main(int argc, char* argv[]) {
                 return 0;
             } else {
                 if (arg == "flip") {
-                    result = flip(img1);
+                    if (start) {
+                        result = flip(img1);
+                    } else {
+                        result = flip(tracking);
+                    }
                 } else if (arg == "onlyred") {
-                    result = onlyColor(img1, "red");
+                    if (start) {
+                        result = onlyColor(img1, "red");
+                    } else {
+                        result = onlyColor(tracking, "red");
+                    }
                 } else if (arg == "onlygreen") {
-                    result = onlyColor(img1, "green");
+                    if (start) {
+                        result = onlyColor(img1, "green");
+                    } else {
+                        result = onlyColor(tracking, "green");
+                    }
                 } else if (arg == "onlyblue") {
-                    result = onlyColor(img1, "blue");
+                    if (start) {
+                        result = onlyColor(img1, "blue");
+                    } else {
+                        result = onlyColor(tracking, "blue");
+                    }
                 }
-
                 tracking = result;
                 i += next;
             }
