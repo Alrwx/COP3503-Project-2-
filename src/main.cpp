@@ -625,7 +625,7 @@ int main(int argc, char* argv[]) {
                 filename = (string)argv[i+next];
 
                 if (!validTGA(filename)) {
-                    msg(4);
+                    msg(5);
                     return 0;
                 }
 
@@ -815,13 +815,13 @@ int main(int argc, char* argv[]) {
             string filename1;
             filename1 = (string)argv[i+next-1];
             if (!validTGA(filename1)) {
-                msg(7);
+                msg(5);
                 return 0;
             }
             string filename2;
             filename2 = (string)argv[i+next];
             if (!validTGA(filename1)) {
-                msg(7);
+                msg(5);
                 return 0;
             }
             
