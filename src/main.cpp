@@ -323,7 +323,7 @@ Image add(Image& img1, Image& img2) {
     return nImg;
 };
 
-Image add(Image& img1, unsigned int num, string channel) {
+Image add(Image& img1, int num, string channel) {
 
     Image nImg;
 
@@ -343,12 +343,16 @@ Image add(Image& img1, unsigned int num, string channel) {
         if (channel == "blue") {
             if ((fblue1 + num) >= 255) {
                 newPix.blue = 255;
+            } else if ((fblue1 + num) <= 0) {
+                newPix.blue = 0;
             } else {
                 newPix.blue = fblue1 + num;
             }
         } else if (channel == "green") {
             if ((fgreen1 + num) >= 255) {
                 newPix.green = 255;
+            } else if ((fgreen1 + num) <= 0) {
+                newPix.green = 0;
             } else {
                 newPix.green = fgreen1 + num;
             }
@@ -356,6 +360,8 @@ Image add(Image& img1, unsigned int num, string channel) {
 
             if ((fred1 + num) >= 255) {
                 newPix.red = 255;
+            } else if ((fred1 + num) <= 0) {
+                newPix.red = 0;
             } else {
                 newPix.red = fred1 + num;
             }
@@ -530,7 +536,8 @@ Image flip(Image& img) {
 
 void msg(int type) {
     if (type == 1) {
-        cout << "./project2.out [output] [firstImage] [method] [...]" << endl;
+        cout << "Project 2: Image Processing, Spring 2025\n" << endl;
+        cout << "\t./project2.out [output] [firstImage] [method] [...]" << endl;
     } else if (type == 2) {
         cout << "Invalid method name." << endl;
     } else if (type == 3) {
@@ -565,12 +572,6 @@ int main(int argc, char* argv[]) {
     Image tracking;
     bool start;
 
-    out = argv[1];
-    if (!validTGA(out)) {
-        msg(7);
-        return 0;
-    }
-
     if ((argc < 2) || ((string)argv[1]) == "--help") {
         msg(1);
         return 0;
@@ -578,6 +579,11 @@ int main(int argc, char* argv[]) {
         for (int i = 1; i < argc; i++) {
             cout << "Arg #" << i << " " << argv[i] << endl;
         }    
+    out = argv[1];
+    if (!validTGA(out)) {
+        msg(7);
+        return 0;
+    }
 
     for (int i = 2; i < argc; i++) {
         Image result;
@@ -668,29 +674,18 @@ int main(int argc, char* argv[]) {
             }
         } else if (arg == "scaleblue" || arg == "scalegreen" || arg == "scalered" || arg == "addred" || arg == "addgreen" || arg == "addblue") {
             int next;
-                if (i == 1) {
+                if (start) {
                     next = 2;
                 } else {
                     next = 1;
                 }
-            if (argc < (i + next)) {
+            if (argc < (i + next + 1)) {
                 msg(3);
                 return 0;
             } else {
-                Image result;
-                Image img1;
-                if (i == 1) {
-                    try {
-                        img1 = ReadPic((string)argv[i+1]);
-                    } catch (invalid_argument& e) {
-                        msg(4);
-                        return 0;
-                    }
-                }
-
                 if (arg == "scaleblue") {
                     int num = stoi(argv[i+next]);
-                    if (i == 1) {
+                    if (start) {
                         result = multiply(img1, (num), "blue");
                     } else {
                         result = multiply(tracking, (num), "blue");
@@ -699,35 +694,35 @@ int main(int argc, char* argv[]) {
 
                 else if (arg == "scalegreen") {
                     int num = stoi(argv[i+next]);
-                    if (i == 1) {
+                    if (start) {
                         result = multiply(img1, (num), "green");
                     } else {
                         result = multiply(tracking, (num), "green");
                     }
                 } else if (arg == "scalered") {
                     int num = stoi(argv[i+next]);
-                    if (i == 1) {
+                    if (start) {
                         result = multiply(img1, (num), "red");
                     } else {
                         result = multiply(tracking, (num), "red");
                     }
                 } else if (arg == "addred") {
                     int num = stoi(argv[i+next]);
-                    if (i == 1) {
+                    if (start) {
                         result = add(img1, (num), "red");
                     } else {
                         result = add(tracking, (num), "red");
                     }
                 } else if (arg == "addgreen") {
                     int num = stoi(argv[i+next]);
-                    if (i == 1) {
+                    if (start) {
                         result = add(img1, (num), "green");
                     } else {
                         result = add(tracking, (num), "green");
                     }
                 } else if (arg == "addblue") {
                     int num = stoi(argv[i+next]);
-                    if (i == 1) {
+                    if (start) {
                         result = add(img1, (num), "blue");
                     } else {
                         result = add(tracking, (num), "blue");
@@ -735,8 +730,7 @@ int main(int argc, char* argv[]) {
                 }
                 tracking = result;
                 i+= next;
-
-                cout << i << endl;
+                // cout << "hello " << i << << endl;
             }
         } else if (arg == "flip" || arg == "onlyred" || arg == "onlygreen" || arg == "onlyblue") {
             int next = 1;
@@ -744,9 +738,6 @@ int main(int argc, char* argv[]) {
                 msg(3);
                 return 0;
             } else {
-                Image result;
-                Image img1 = ReadPic(argv[i+next]);
-
                 if (arg == "flip") {
                     result = flip(img1);
                 } else if (arg == "onlyred") {
@@ -756,15 +747,31 @@ int main(int argc, char* argv[]) {
                 } else if (arg == "onlyblue") {
                     result = onlyColor(img1, "blue");
                 }
+
+                tracking = result;
+                i += next;
             }
         } else if (arg == "combine") {
-            cout << "bruh" << endl;
+            int next = 3;
+            if (argc < (i + next + 1)) {
+                msg(3);
+                return 0;
+            }
+            
+
+            if (start) {
+                result = combine(img1,img2,img3);
+            } else {
+            result = combine(tracking,img2,img3);
+            }
+            tracking = result;
+            i += next;
         }
-        // else {
-        //     msg(2);
-        //     return 0;
-        // }
+        else {
+            msg(2);
+            return 0;
         }
+        
     }
         
     cout << "done" << endl;
