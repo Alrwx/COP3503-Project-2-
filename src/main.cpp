@@ -768,7 +768,13 @@ int main(int argc, char* argv[]) {
                 // cout << "hello " << i << << endl;
             }
         } else if (arg == "flip" || arg == "onlyred" || arg == "onlygreen" || arg == "onlyblue") {
-            int next = 1;
+            cout << "run: " << i << " ? ----  ";
+            int next;
+            if (start) {
+                next = 1;
+            } else {
+                next = 0;
+            }
             if (argc < (i + next)) {
                 msg(3);
                 return 0;
@@ -800,6 +806,7 @@ int main(int argc, char* argv[]) {
                 }
                 tracking = result;
                 i += next;
+                cout << "yes: " << i << endl;
             }
         } else if (arg == "combine") {
             int next;
