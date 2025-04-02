@@ -752,17 +752,42 @@ int main(int argc, char* argv[]) {
                 i += next;
             }
         } else if (arg == "combine") {
-            int next = 3;
+            int next;
+            if (start) {
+                next = 3;
+            } else {
+                next = 2;
+            }
             if (argc < (i + next + 1)) {
                 msg(3);
                 return 0;
             }
+            string filename1;
+            filename1 = (string)argv[i+next-1];
+            if (!validTGA(filename1)) {
+                msg(7);
+                return 0;
+            }
+            string filename2;
+            filename2 = (string)argv[i+next];
+            if (!validTGA(filename1)) {
+                msg(7);
+                return 0;
+            }
             
+            Image img2, img3;
+            try {
+                img2 = ReadPic(filename1);
+                img3 = ReadPic(filename2);
+            } catch (invalid_argument& e) {
+                msg(4);
+                return 0;
+            }
 
             if (start) {
                 result = combine(img1,img2,img3);
             } else {
-            result = combine(tracking,img2,img3);
+                result = combine(tracking,img2,img3);
             }
             tracking = result;
             i += next;
@@ -771,10 +796,11 @@ int main(int argc, char* argv[]) {
             msg(2);
             return 0;
         }
-        
-    }
+    } 
+    
         
     cout << "done" << endl;
     WritePic(tracking, out);
     return 0;
+    }
 };
