@@ -530,7 +530,7 @@ Image flip(Image& img) {
 
 void msg(int type) {
     if (type == 1) {
-        cout << "yeah your on your own bucko" << endl;
+        cout << "./project2.out [output] [firstImage] [method] [...]" << endl;
     } else if (type == 2) {
         cout << "Invalid method name." << endl;
     } else if (type == 3) {
@@ -545,16 +545,16 @@ void msg(int type) {
 };
 
 int main(int argc, char* argv[]) {
+    string arg;
+    Image tracking;
+
     if ((argc < 2) || ((string)argv[1]) == "--help") {
         msg(1);
         return 0;
     } else {
         for (int i = 1; i < argc; i++) {
             cout << "Arg #" << i << " " << argv[i] << endl;
-        }
-        
-    string arg;
-    Image tracking;
+        }    
     for (int i = 1; i < argc; i++) {
         cout << "hi! " << i << endl;
 
@@ -617,9 +617,7 @@ int main(int argc, char* argv[]) {
                 i+= next;
                 cout << i << endl;
             }
-        } else if (arg == "scaleblue" || arg == "scalered" || arg == "scalered") {
-            cout << "bruh" << endl;
-        } else if (arg == "flip" || arg == "onlyred" || arg == "onlygreen" || arg == "onlyblue") {
+        } else if (arg == "scaleblue" || arg == "scalegreen" || arg == "scalered" || arg == "addred" || arg == "addgreen" || arg == "addblue") {
             int next;
                 if (i == 1) {
                     next = 2;
@@ -630,7 +628,85 @@ int main(int argc, char* argv[]) {
                 msg(3);
                 return 0;
             } else {
-                cout << "bruh" << endl;
+                Image result;
+                Image img1;
+                if (i == 1) {
+                    try {
+                        img1 = ReadPic((string)argv[i+1]);
+                    } catch (invalid_argument& e) {
+                        msg(4);
+                        return 0;
+                    }
+                }
+
+                if (arg == "scaleblue") {
+                    int num = stoi(argv[i+next]);
+                    if (i == 1) {
+                        result = multiply(img1, (num), "blue");
+                    } else {
+                        result = multiply(tracking, (num), "blue");
+                    }
+                }
+
+                else if (arg == "scalegreen") {
+                    int num = stoi(argv[i+next]);
+                    if (i == 1) {
+                        result = multiply(img1, (num), "green");
+                    } else {
+                        result = multiply(tracking, (num), "green");
+                    }
+                } else if (arg == "scalered") {
+                    int num = stoi(argv[i+next]);
+                    if (i == 1) {
+                        result = multiply(img1, (num), "red");
+                    } else {
+                        result = multiply(tracking, (num), "red");
+                    }
+                } else if (arg == "addred") {
+                    int num = stoi(argv[i+next]);
+                    if (i == 1) {
+                        result = add(img1, (num), "red");
+                    } else {
+                        result = add(tracking, (num), "red");
+                    }
+                } else if (arg == "addgreen") {
+                    int num = stoi(argv[i+next]);
+                    if (i == 1) {
+                        result = add(img1, (num), "green");
+                    } else {
+                        result = add(tracking, (num), "green");
+                    }
+                } else if (arg == "addblue") {
+                    int num = stoi(argv[i+next]);
+                    if (i == 1) {
+                        result = add(img1, (num), "blue");
+                    } else {
+                        result = add(tracking, (num), "blue");
+                    }
+                }
+                tracking = result;
+                i+= next;
+
+                cout << i << endl;
+            }
+        } else if (arg == "flip" || arg == "onlyred" || arg == "onlygreen" || arg == "onlyblue") {
+            int next = 1;
+            if (argc < (i + next)) {
+                msg(3);
+                return 0;
+            } else {
+                Image result;
+                Image img1 = ReadPic(argv[i+next]);
+
+                if (arg == "flip") {
+                    result = flip(img1);
+                } else if (arg == "onlyred") {
+                    result = onlyColor(img1, "red");
+                } else if (arg == "onlygreen") {
+                    result = onlyColor(img1, "green");
+                } else if (arg == "onlyblue") {
+                    result = onlyColor(img1, "blue");
+                }
             }
         } else if (arg == "combine") {
             cout << "bruh" << endl;
@@ -638,10 +714,10 @@ int main(int argc, char* argv[]) {
             msg(2);
             return 0;
         }
+        }
     }
         
     cout << "done" << endl;
     WritePic(tracking, "output/img.tga");
-    }
     return 0;
 };
